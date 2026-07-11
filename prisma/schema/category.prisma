@@ -5,5 +5,7 @@ model Category {
  
   createdAt    DateTime     @default(now())
 
-  gearItems   GearItem[]
+  gears   Gear[]
+
+  @@map("categorys")
 }

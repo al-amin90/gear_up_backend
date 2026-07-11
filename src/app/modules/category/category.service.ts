@@ -17,11 +17,7 @@ const createCategory = async (payload: ICreateCategoryPayload) => {
 const getAllCategories = async () => {
   const result = await prisma.category.findMany({
     include: {
-      _count: {
-        select: {
-          gearItems: true,
-        },
-      },
+      gears: true,
     },
     orderBy: { name: "asc" },
   });

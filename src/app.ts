@@ -6,6 +6,8 @@ import GlobalErrorHandler from "./app/middlewares/GlobalErrorHandler";
 import NotFound from "./app/middlewares/NotFound";
 import { authRouter } from "./app/modules/auth/auth.route";
 import { categoryRouter } from "./app/modules/category/category.route";
+import { gearRouter } from "./app/modules/gear/gear.route";
+import { providerRouter } from "./app/modules/provider/provider.route";
 
 const app: Application = express();
 
@@ -34,7 +36,8 @@ app.use(
 // __) all application route here
 app.use("/api/auth", authRouter);
 app.use("/api/categories", categoryRouter);
-// app.use("/api/comments", commentRouter);
+app.use("/api/gear", gearRouter);
+app.use("/api/provider", providerRouter);
 // app.use("/api/subscription", subscriptionRouter);
 
 app.get("/", (req, res) => {

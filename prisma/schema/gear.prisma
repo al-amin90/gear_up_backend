@@ -1,4 +1,4 @@
-model GearItem {
+model Gear {
   id              String      @id @default(uuid())
   name            String
   description     String
@@ -7,7 +7,6 @@ model GearItem {
   stock           Int         @default(1)
   availableStock  Int         @default(1)
  
-  specifications  Json?
   isAvailable     Boolean     @default(true)
   isDeleted       Boolean     @default(false)
   providerId      String
@@ -22,4 +21,6 @@ model GearItem {
   category        Category    @relation(fields: [categoryId], references: [id])
 //   rentalItems     RentalItem[]
 //   reviews         Review[]
+
+ @@map("gears")
 }

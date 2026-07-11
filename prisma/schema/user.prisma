@@ -12,7 +12,7 @@ model User {
   updatedAt    DateTime     @updatedAt
 
 // relation
-  gearItems GearItem[]
+  gears Gear[]
   
   @@map("users")
 }
