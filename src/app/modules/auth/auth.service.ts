@@ -152,7 +152,7 @@ const getAllUsers = async () => {
       _count: {
         select: {
           rentals: true,
-          gearItems: true,
+          gears: true,
         },
       },
     },
@@ -165,14 +165,16 @@ const getAllUsers = async () => {
   return result;
 };
 
-const updateStatus = async (userId: string, isActive: boolean) => {
+const updateStatus = async (userId: string, isActive: string) => {
+  const isUserActive = isActive === "activate" ? true : false;
+
   const result = await prisma.user.update({
     where: {
       id: userId,
     },
 
     data: {
-      isActive,
+      isActive: isUserActive,
     },
     omit: {
       password: true,
