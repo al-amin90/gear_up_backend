@@ -103,15 +103,15 @@ const getMyRentals = async (customerId: string, query: any) => {
   const skip = (page - 1) * limit;
 
   const andCondition: RentalOrderWhereInput[] = [];
+
+  andCondition.push({
+    customerId,
+  });
   if (query.status) {
     andCondition.push({
       status: query.status as OrderStatus,
     });
   }
-
-  andCondition.push({
-    customerId,
-  });
 
   const [data, total] = await Promise.all([
     prisma.rentalOrder.findMany({

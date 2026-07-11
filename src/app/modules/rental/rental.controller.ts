@@ -55,19 +55,6 @@ const getRentalById = async (req: Request, res: Response) => {
   });
 };
 
-const cancelRental = async (req: Request, res: Response) => {
-  const result = await rentalServices.cancelRental(
-    req.params.rentalId as string,
-    req.user?.id as string,
-  );
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Rental cancelled successfully",
-    data: result,
-  });
-};
-
 const getProviderOrders = async (req: Request, res: Response) => {
   const result = await rentalServices.getProviderOrders(
     req.user?.id as string,
@@ -101,7 +88,6 @@ export const rentalControllers = {
   createRental,
   getMyRentals,
   getRentalById,
-  cancelRental,
   getProviderOrders,
   updateOrderStatus,
   getAllRentals,

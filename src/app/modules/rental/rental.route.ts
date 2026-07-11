@@ -5,14 +5,13 @@ import { rentalControllers } from "./rental.controller";
 
 const router = Router();
 
-// Customer
 router.post(
   "/",
   auth(Role.CUSTOMER, Role.PROVIDER, Role.ADMIN),
   rentalControllers.createRental,
 );
 router.get(
-  "/my-rentals",
+  "/",
   auth(Role.CUSTOMER, Role.PROVIDER, Role.ADMIN),
   rentalControllers.getMyRentals,
 );
