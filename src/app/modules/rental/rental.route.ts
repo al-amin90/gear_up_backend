@@ -6,12 +6,15 @@ import { rentalControllers } from "./rental.controller";
 const router = Router();
 
 // Customer
-router.post("/", auth(Role.CUSTOMER), rentalControllers.createRental);
-router.get("/my-rentals", auth(Role.CUSTOMER), rentalControllers.getMyRentals);
-router.patch(
-  "/:rentalId/cancel",
-  auth(Role.CUSTOMER),
-  rentalControllers.cancelRental,
+router.post(
+  "/",
+  auth(Role.CUSTOMER, Role.PROVIDER, Role.ADMIN),
+  rentalControllers.createRental,
+);
+router.get(
+  "/my-rentals",
+  auth(Role.CUSTOMER, Role.PROVIDER, Role.ADMIN),
+  rentalControllers.getMyRentals,
 );
 
 // Provider

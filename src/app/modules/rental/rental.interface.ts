@@ -9,11 +9,3 @@ export interface ICreateRentalPayload {
   items: IRentalItem[];
   note?: string;
 }
-
-export interface IRentalQuery {
-  page?: string;
-  limit?: string;
-  status?: string;
-  sortBy?: string;
-  sortOrder?: string;
-}
