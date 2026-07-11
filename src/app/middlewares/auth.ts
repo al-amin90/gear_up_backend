@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { jwtUtils } from "../utils/jwt";
 import config from "../config";
 import type { JwtPayload } from "jsonwebtoken";
-import { ActiveStatus, Role } from "../../../generated/prisma/enums";
+import { Role } from "../../../generated/prisma/enums";
 import AppError from "../utils/AppError";
 import { prisma } from "../../lib/prisma";
 
@@ -51,8 +51,8 @@ const auth = (...requiredRoles: string[]) => {
       throw new AppError(403, "User Not found! Logged in");
     }
 
-    if (user.activeStatus === ActiveStatus.BLOCKED) {
-      throw new AppError(403, "You are Blocked");
+    if (!user.isActive) {
+      throw new AppError(403, "You are Not Active");
     }
 
     req.user = {
