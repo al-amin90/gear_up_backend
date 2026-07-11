@@ -323,7 +323,11 @@ const updateOrderStatus = async (
       });
     });
 
-    return await prisma.rentalOrder.findUnique({ where: { id: rentalId } });
+    return await prisma.rentalOrder.findUnique({
+      where: {
+        id: rentalId,
+      },
+    });
   }
 
   const result = await prisma.rentalOrder.update({

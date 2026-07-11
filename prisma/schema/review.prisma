@@ -4,10 +4,10 @@ model Review {
   comment     String
   createdAt   DateTime  @default(now())
 
-  // Relations
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
   gearItemId  String
+
+  user        User      @relation(fields: [userId], references: [id])
   gearItem    Gear  @relation(fields: [gearItemId], references: [id])
 
   @@unique([userId, gearItemId])
