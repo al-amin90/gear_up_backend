@@ -275,36 +275,31 @@ const updateOrderStatus = async (
   isAdmin: boolean,
 ) => {
   const rental = await prisma.rentalOrder.findUniqueOrThrow({
-    where: { id: rentalId },
-    include: { items: true },
+    where: {
+      id: rentalId,
+    },
+
+    include: {
+      items: true,
+    },
   });
 
   if (!isAdmin) {
     const providerGear = await prisma.gear.findMany({
-      where: { providerId },
-      select: { id: true },
+      where: {
+        providerId,
+      },
     });
+
     const gearIds = providerGear.map((g) => g.id);
+
     const hasAccess = rental.items.some((item) =>
       gearIds.includes(item.gearItemId),
     );
-    if (!hasAccess) throw new AppError(403, "Access denied");
-  }
 
-  // Valid status transitions
-  const validTransitions: Record<string, OrderStatus[]> = {
-    PLACED: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
-    CONFIRMED: [OrderStatus.PICKED_UP, OrderStatus.CANCELLED],
-    PAID: [OrderStatus.PICKED_UP],
-    PICKED_UP: [OrderStatus.RETURNED],
-  };
-
-  const allowed = validTransitions[rental.status] || [];
-  if (!allowed.includes(status)) {
-    throw new AppError(
-      400,
-      `Cannot transition from ${rental.status} to ${status}`,
-    );
+    if (!hasAccess) {
+      throw new AppError(403, "Access denied");
+    }
   }
 
   // Restore stock on return
@@ -312,26 +307,43 @@ const updateOrderStatus = async (
     await prisma.$transaction(async (tx) => {
       for (const item of rental.items) {
         await tx.gear.update({
-          where: { id: item.gearItemId },
+          where: {
+            id: item.gearItemId,
+          },
           data: {
             availableStock: { increment: item.quantity },
             isAvailable: true,
           },
         });
       }
+
       await tx.rentalOrder.update({
         where: { id: rentalId },
         data: { status },
       });
     });
+
     return await prisma.rentalOrder.findUnique({ where: { id: rentalId } });
   }
 
-  return await prisma.rentalOrder.update({
-    where: { id: rentalId },
-    data: { status },
-    include: { items: { include: { gears: true } } },
+  const result = await prisma.rentalOrder.update({
+    where: {
+      id: rentalId,
+    },
+    data: {
+      status,
+    },
+
+    include: {
+      items: {
+        include: {
+          gears: true,
+        },
+      },
+    },
   });
+
+  return result;
 };
 
 export const rentalServices = {

@@ -32,7 +32,7 @@ router.get(
 );
 
 router.patch(
-  "/orders/:rentalId/status",
+  "/orders/:rentalId",
   auth(Role.PROVIDER, Role.ADMIN),
   rentalControllers.updateOrderStatus,
 );
