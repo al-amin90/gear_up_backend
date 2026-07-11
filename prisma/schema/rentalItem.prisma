@@ -9,4 +9,6 @@ model RentalItem {
 
   rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id])
   gears     Gear    @relation(fields: [gearItemId], references: [id])
+
+     @@map("rentalItems")
 }

@@ -8,6 +8,7 @@ const createGear = async (req: Request, res: Response) => {
     req.body,
     req.user?.id as string,
   );
+
   sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -18,6 +19,7 @@ const createGear = async (req: Request, res: Response) => {
 
 const getAllGear = async (req: Request, res: Response) => {
   const result = await gearServices.getAllGear(req.query);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -29,6 +31,7 @@ const getAllGear = async (req: Request, res: Response) => {
 
 const getGearById = async (req: Request, res: Response) => {
   const result = await gearServices.getGearById(req.params.gearId as string);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -44,6 +47,7 @@ const updateGear = async (req: Request, res: Response) => {
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -58,6 +62,7 @@ const deleteGear = async (req: Request, res: Response) => {
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -68,6 +73,7 @@ const deleteGear = async (req: Request, res: Response) => {
 
 const getMyGear = async (req: Request, res: Response) => {
   const result = await gearServices.getMyGear(req.user?.id as string);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,

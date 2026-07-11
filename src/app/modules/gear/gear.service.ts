@@ -87,7 +87,11 @@ const getAllGear = async (query: any) => {
       },
     }),
 
-    prisma.gear.count({ where: { AND: andCondition } }),
+    prisma.gear.count({
+      where: {
+        AND: andCondition,
+      },
+    }),
   ]);
 
   return {
@@ -115,24 +119,18 @@ const getGearById = async (gearId: string) => {
           password: true,
         },
       },
-      //   reviews: {
-      //     include: {
-      //       user: {
-      //         omit: {
-      //           password: true,
-      //         },
-      //       },
-      //     },
-      //     orderBy: {
-      //       createdAt: "desc",
-      //     },
-      //     take: 10,
-      //   },
-      //   _count: {
-      //     select: {
-      //       reviews: true,
-      //     },
-      //   },
+      reviews: {
+        include: {
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
 

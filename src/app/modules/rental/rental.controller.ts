@@ -32,7 +32,7 @@ const getMyRentals = async (req: Request, res: Response) => {
 
 const getRentalById = async (req: Request, res: Response) => {
   const result = await rentalServices.getRentalById(
-    req.params.rentalId,
+    req.params.rentalId as string,
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );
@@ -46,7 +46,7 @@ const getRentalById = async (req: Request, res: Response) => {
 
 const cancelRental = async (req: Request, res: Response) => {
   const result = await rentalServices.cancelRental(
-    req.params.rentalId,
+    req.params.rentalId as string,
     req.user?.id as string,
   );
   sendResponse(res, {
@@ -73,7 +73,7 @@ const getProviderOrders = async (req: Request, res: Response) => {
 
 const updateOrderStatus = async (req: Request, res: Response) => {
   const result = await rentalServices.updateOrderStatus(
-    req.params.rentalId,
+    req.params.rentalId as string,
     req.body.status as OrderStatus,
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
