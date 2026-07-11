@@ -138,6 +138,31 @@ const getMyRentals = async (customerId: string, query: any) => {
   };
 };
 
+const getAllRentals = async () => {
+  const result = await prisma.rentalOrder.findMany({
+    include: {
+      customer: {
+        omit: {
+          password: true,
+        },
+      },
+
+      items: {
+        include: {
+          gears: true,
+        },
+      },
+      payment: true,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return result;
+};
+
 const getRentalById = async (
   rentalId: string,
   userId: string,
@@ -278,4 +303,5 @@ export const rentalServices = {
   getRentalById,
   getProviderOrders,
   updateOrderStatus,
+  getAllRentals,
 };

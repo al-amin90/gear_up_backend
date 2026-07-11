@@ -16,11 +16,22 @@ const createRental = async (req: Request, res: Response) => {
   });
 };
 
+const getAllRentals = async (req: Request, res: Response) => {
+  const result = await rentalServices.getAllRentals();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "All rentals retrieved",
+    data: result,
+  });
+};
+
 const getMyRentals = async (req: Request, res: Response) => {
   const result = await rentalServices.getMyRentals(
     req.user?.id as string,
     req.query,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -93,4 +104,5 @@ export const rentalControllers = {
   cancelRental,
   getProviderOrders,
   updateOrderStatus,
+  getAllRentals,
 };
