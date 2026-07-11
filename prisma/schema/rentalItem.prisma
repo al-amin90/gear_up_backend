@@ -1,0 +1,12 @@
+model RentalItem {
+  id            String      @id @default(uuid())
+  quantity      Int         @default(1)
+  pricePerDay   Float
+  subtotal      Float
+
+  // Relations
+  rentalOrderId String
+  rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id])
+  gearItemId    String
+  gearItem      GearItem    @relation(fields: [gearItemId], references: [id])
+}
