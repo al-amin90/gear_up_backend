@@ -5,6 +5,7 @@ import config from "./app/config";
 import GlobalErrorHandler from "./app/middlewares/GlobalErrorHandler";
 import NotFound from "./app/middlewares/NotFound";
 import { authRouter } from "./app/modules/auth/auth.route";
+import { categoryRouter } from "./app/modules/category/category.route";
 
 const app: Application = express();
 
@@ -32,7 +33,7 @@ app.use(
 
 // __) all application route here
 app.use("/api/auth", authRouter);
-// app.use("/api/posts", postRouter);
+app.use("/api/categories", categoryRouter);
 // app.use("/api/comments", commentRouter);
 // app.use("/api/subscription", subscriptionRouter);
 
