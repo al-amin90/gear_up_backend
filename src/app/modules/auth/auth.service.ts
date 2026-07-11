@@ -5,6 +5,7 @@ import AppError from "../../utils/AppError";
 import type { TLoginUser } from "./auth.interface";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import type { Role } from "../../../../generated/prisma/enums";
+import { jwtUtils } from "../../utils/jwt";
 
 type IUser = {
   name: string;
@@ -67,79 +68,78 @@ const getUserFromDB = async (id: string) => {
 };
 
 const loginUser = async (payload: TLoginUser) => {
-  // const { email, password } = payload;
+  const { email, password } = payload;
 
-  // const user = await prisma.users.findUniqueOrThrow({
-  //   where: { email },
-  // });
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email },
+  });
 
-  // if (user.isActive === ActiveStatus.BLOCKED) {
-  //   throw new AppError(403, "You are Blocked");
-  // }
+  if (!user.isActive) {
+    throw new AppError(403, "You are Not Active");
+  }
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-  // const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
+    throw new AppError(403, "Password do not match");
+  }
 
-  // if (!isPasswordMatch) {
-  //   throw new AppError(403, "Password do not match");
-  // }
+  const jwtPayload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    name: user.name,
+  };
 
-  // const jwtPayload = {
-  //   id: user.id,
-  //   email: user.email,
-  //   role: user.role,
-  //   name: user.name,
-  // };
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.access_token,
+    config.access_expires_in,
+  );
 
-  // const accessToken = jwtUtils.createToken(
-  //   jwtPayload,
-  //   config.access_token,
-  //   config.access_expires_in,
-  // );
-
-  // const refreshToken = jwtUtils.createToken(
-  //   jwtPayload,
-  //   config.refresh_token,
-  //   config.refresh_expires_in,
-  // );
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.refresh_token,
+    config.refresh_expires_in,
+  );
 
   return {
-    accessToken: 3,
-    refreshToken: 3,
+    accessToken,
+    refreshToken,
   };
 };
 
 const refreshToken = async (refreshToken: string) => {
-  // const verifiedToken = jwtUtils.verifyToken(
-  //   refreshToken,
-  //   config.refresh_token,
-  // );
+  const verifiedToken = jwtUtils.verifyToken(
+    refreshToken,
+    config.refresh_token,
+  );
 
-  // console.log("verifiedToken", verifiedToken);
+  console.log("verifiedToken", verifiedToken);
 
-  // const { id } = verifiedToken as JwtPayload;
+  const { id } = verifiedToken as JwtPayload;
 
-  // const user = await prisma.user.findUniqueOrThrow({
-  //   where: { id },
-  // });
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
 
-  // if (user.activeStatus === ActiveStatus.BLOCKED) {
-  //   throw new AppError(403, "You are Blocked");
-  // }
+  if (!user.isActive) {
+    throw new AppError(403, "You are Not Active");
+  }
 
-  // const jwtPayload = {
-  //   id: user.id,
-  //   email: user.email,
-  //   role: user.role,
-  //   name: user.name,
-  // };
+  const jwtPayload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    name: user.name,
+  };
 
-  // const accessToken = jwtUtils.createToken(
-  //   jwtPayload,
-  //   config.access_token,
-  //   config.access_expires_in,
-  // );
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.access_token,
+    config.access_expires_in,
+  );
 
-  return { accessToken: 3 };
+  return { accessToken };
 };
 
 export const authServices = {
