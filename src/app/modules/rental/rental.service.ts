@@ -191,41 +191,80 @@ const getRentalById = async (rentalId: string, userId: string) => {
   return rental;
 };
 
-// Provider: get incoming orders for their gear
 const getProviderOrders = async (providerId: string, query: any) => {
   const limit = Number(query.limit) || 10;
   const page = Number(query.page) || 1;
   const skip = (page - 1) * limit;
 
   const providerGear = await prisma.gear.findMany({
-    where: { providerId },
-    select: { id: true },
+    where: {
+      providerId,
+    },
+
+    select: {
+      id: true,
+    },
   });
+
   const gearIds = providerGear.map((g) => g.id);
 
   const andCondition: RentalOrderWhereInput[] = [
-    { items: { some: { gearItemId: { in: gearIds } } } },
+    {
+      items: {
+        some: {
+          gearItemId: {
+            in: gearIds,
+          },
+        },
+      },
+    },
   ];
-  if (query.status) andCondition.push({ status: query.status as OrderStatus });
+
+  if (query.status) {
+    andCondition.push({ status: query.status as OrderStatus });
+  }
 
   const [data, total] = await Promise.all([
     prisma.rentalOrder.findMany({
-      where: { AND: andCondition },
+      where: {
+        AND: andCondition,
+      },
       take: limit,
       skip,
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
+
       include: {
-        items: { include: { gears: true } },
-        customer: { omit: { password: true } },
+        items: {
+          include: {
+            gears: true,
+          },
+        },
+        customer: {
+          omit: {
+            password: true,
+          },
+        },
         payment: true,
       },
     }),
-    prisma.rentalOrder.count({ where: { AND: andCondition } }),
+
+    prisma.rentalOrder.count({
+      where: {
+        AND: andCondition,
+      },
+    }),
   ]);
 
   return {
     data,
-    meta: { page, limit, total, totalPage: Math.ceil(total / limit) },
+    meta: {
+      page,
+      limit,
+      total,
+      totalPage: Math.ceil(total / limit),
+    },
   };
 };
 

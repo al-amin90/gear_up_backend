@@ -62,6 +62,7 @@ const getProviderOrders = async (req: Request, res: Response) => {
     req.user?.id as string,
     req.query,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -78,6 +79,7 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
