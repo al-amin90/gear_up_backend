@@ -105,6 +105,33 @@ const getAllGear = async (query: any) => {
   };
 };
 
+const getAllGearWithoutPagination = async () => {
+  const result = await prisma.gear.findMany({
+    where: {
+      isDeleted: false,
+    },
+
+    include: {
+      category: true,
+      provider: {
+        omit: {
+          password: true,
+        },
+      },
+
+      _count: {
+        select: {
+          reviews: true,
+          rentalItems: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return result;
+};
+
 const getGearById = async (gearId: string) => {
   const gear = await prisma.gear.findUniqueOrThrow({
     where: {
@@ -208,4 +235,5 @@ export const gearServices = {
   updateGear,
   deleteGear,
   getMyGear,
+  getAllGearWithoutPagination,
 };

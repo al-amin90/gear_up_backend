@@ -17,6 +17,7 @@ const createReview = async (payload: ICreateReviewPayload, userId: string) => {
     where: {
       customerId: userId,
       status: OrderStatus.RETURNED,
+
       items: {
         some: {
           gearItemId: payload.gearItemId,

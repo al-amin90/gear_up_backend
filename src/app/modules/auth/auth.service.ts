@@ -142,9 +142,51 @@ const refreshToken = async (refreshToken: string) => {
   return { accessToken };
 };
 
+const getAllUsers = async () => {
+  const result = await prisma.user.findMany({
+    omit: {
+      password: true,
+    },
+
+    include: {
+      _count: {
+        select: {
+          rentals: true,
+          gearItems: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return result;
+};
+
+const updateStatus = async (userId: string, isActive: boolean) => {
+  const result = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+
+    data: {
+      isActive,
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  return result;
+};
+
 export const authServices = {
   loginUser,
   refreshToken,
   getUserFromDB,
   registerUserIntoDB,
+  getAllUsers,
+  updateStatus,
 };

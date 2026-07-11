@@ -82,6 +82,17 @@ const getMyGear = async (req: Request, res: Response) => {
   });
 };
 
+const getAllGearWithoutPagination = async (req: Request, res: Response) => {
+  const result = await gearServices.getAllGearWithoutPagination();
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "All gear retrieved",
+    data: result,
+  });
+};
+
 export const gearControllers = {
   createGear,
   getAllGear,
@@ -89,4 +100,5 @@ export const gearControllers = {
   updateGear,
   deleteGear,
   getMyGear,
+  getAllGearWithoutPagination,
 };

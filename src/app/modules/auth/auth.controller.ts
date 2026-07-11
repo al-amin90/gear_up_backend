@@ -79,9 +79,36 @@ const refreshToken = async (req: Request, res: Response) => {
   });
 };
 
+const getAllUsers = async (req: Request, res: Response) => {
+  const result = await authServices.getAllUsers();
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Users retrieved",
+    data: result,
+  });
+};
+
+const updateUserStatus = async (req: Request, res: Response) => {
+  const result = await authServices.updateStatus(
+    req.params.userId as string,
+    req.body.isActive,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "User status updated",
+    data: result,
+  });
+};
+
 export const authControllers = {
   loginUser,
   refreshToken,
   getMyProfile,
   registerUser,
+  getAllUsers,
+  updateUserStatus,
 };

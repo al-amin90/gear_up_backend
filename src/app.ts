@@ -10,6 +10,7 @@ import { gearRouter } from "./app/modules/gear/gear.route";
 import { providerRouter } from "./app/modules/provider/provider.route";
 import { rentalRouter } from "./app/modules/rental/rental.route";
 import { reviewRouter } from "./app/modules/review/review.route";
+import { adminRouter } from "./app/modules/admin/admin.route";
 
 const app: Application = express();
 
@@ -43,7 +44,7 @@ app.use("/api/provider", providerRouter);
 app.use("/api/rentals", rentalRouter);
 // app.use("/api/payments", paymentRouter);
 app.use("/api/reviews", reviewRouter);
-// app.use("/api/admin", adminRouter);
+app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${config.port}`);
