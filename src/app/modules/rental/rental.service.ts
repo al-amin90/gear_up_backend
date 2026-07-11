@@ -163,11 +163,7 @@ const getAllRentals = async () => {
   return result;
 };
 
-const getRentalById = async (
-  rentalId: string,
-  userId: string,
-  isAdmin: boolean,
-) => {
+const getRentalById = async (rentalId: string, userId: string) => {
   const rental = await prisma.rentalOrder.findUniqueOrThrow({
     where: { id: rentalId },
     include: {
@@ -177,16 +173,18 @@ const getRentalById = async (
     },
   });
 
-  if (!isAdmin && rental.customerId !== userId) {
-    // Provider check — see if any item belongs to this provider
+  if (rental.customerId !== userId) {
     const providerGearIds = await prisma.gear.findMany({
       where: { providerId: userId },
       select: { id: true },
     });
+
     const providerIds = providerGearIds.map((g) => g.id);
+
     const hasAccess = rental.items.some((item) =>
       providerIds.includes(item.gearItemId),
     );
+
     if (!hasAccess) throw new AppError(403, "Access denied");
   }
 
