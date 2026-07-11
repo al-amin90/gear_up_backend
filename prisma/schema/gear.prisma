@@ -19,8 +19,8 @@ model Gear {
  
   provider        User        @relation(fields: [providerId], references: [id])
   category        Category    @relation(fields: [categoryId], references: [id])
-//   rentalItems     RentalItem[]
-//   reviews         Review[]
+  rentalItems     RentalItem[]
+  reviews         Review[]
 
  @@map("gears")
 }

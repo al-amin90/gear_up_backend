@@ -4,9 +4,9 @@ model RentalItem {
   pricePerDay   Float
   subtotal      Float
 
-  // Relations
   rentalOrderId String
-  rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id])
   gearItemId    String
-  gearItem      GearItem    @relation(fields: [gearItemId], references: [id])
+
+  rentalOrder   RentalOrder @relation(fields: [rentalOrderId], references: [id])
+  gears     Gear    @relation(fields: [gearItemId], references: [id])
 }

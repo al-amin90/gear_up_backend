@@ -5,12 +5,14 @@ model RentalOrder {
   endDate       DateTime
   totalDays     Int
   totalAmount   Float
-  note          String?
+
+
+  customerId    String
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  // Relations
-  customerId    String
+
   customer      User          @relation(fields: [customerId], references: [id])
   items         RentalItem[]
   payment       Payment?

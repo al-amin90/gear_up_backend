@@ -11,8 +11,10 @@ model User {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-// relation
+
   gears Gear[]
-  
+  rentals     RentalOrder[]
+  reviews     Review[]
+  payments    Payment[]
   @@map("users")
 }

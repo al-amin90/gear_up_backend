@@ -38,7 +38,10 @@ app.use("/api/auth", authRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/gear", gearRouter);
 app.use("/api/provider", providerRouter);
-// app.use("/api/subscription", subscriptionRouter);
+// app.use("/api/rentals", rentalRouter);
+// app.use("/api/payments", paymentRouter);
+// app.use("/api/reviews", reviewRouter);
+// app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${config.port}`);
