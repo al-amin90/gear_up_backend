@@ -5,9 +5,10 @@ import { paymentServices } from "./payment.service";
 
 const createPayment = async (req: Request, res: Response) => {
   const result = await paymentServices.createPayment(
-    req.body,
+    req.body.rentalOrderId,
     req.user?.id as string,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -30,7 +31,7 @@ const handleWebhook = async (req: Request, res: Response) => {
 const verifySession = async (req: Request, res: Response) => {
   const { sessionId } = req.params;
   const result = await paymentServices.verifySession(
-    sessionId,
+    sessionId as string,
     req.user?.id as string,
   );
   sendResponse(res, {
@@ -53,7 +54,7 @@ const getMyPayments = async (req: Request, res: Response) => {
 
 const getPaymentById = async (req: Request, res: Response) => {
   const result = await paymentServices.getPaymentById(
-    req.params.paymentId,
+    req.params.paymentId as string,
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );

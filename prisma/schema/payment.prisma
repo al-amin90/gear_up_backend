@@ -1,12 +1,10 @@
 model Payment {
   id              String          @id @default(uuid())
-  amount          Float
-  status          PaymentStatus   @default(PENDING)
   transactionId   String?         @unique
   sessionId       String?
-  paymentUrl      String?
   paidAt          DateTime?
 
+  status          PaymentStatus   @default(PENDING)
 
   rentalOrderId   String          @unique
   userId          String
