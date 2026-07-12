@@ -66,7 +66,6 @@ const createPayment = async (rentalOrderId: string, userId: string) => {
       create: {
         rentalOrderId: rental.id,
         userId,
-        amount: rental.totalAmount,
         sessionId: session.id,
         status: PaymentStatus.PENDING,
       },
@@ -133,9 +132,9 @@ const handleWebhook = async (rawBody: Buffer, signature: string) => {
   return { received: true };
 };
 
-// Verify payment on success page (frontend calls this)
 const verifySession = async (sessionId: string, userId: string) => {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
+  console.log("session", session);
 
   if (session.payment_status !== "paid") {
     throw new AppError(400, "Payment not completed");
@@ -143,19 +142,17 @@ const verifySession = async (sessionId: string, userId: string) => {
 
   const { rentalOrderId } = session.metadata as { rentalOrderId: string };
 
-  const payment = await prisma.payment.findUnique({
-    where: { rentalOrderId },
-    include: {
-      rentalOrder: {
-        include: { items: { include: { gearItem: true } } },
-      },
+  const result = await prisma.payment.findUnique({
+    where: {
+      rentalOrderId,
     },
   });
 
-  if (!payment) throw new AppError(404, "Payment record not found");
-  if (payment.userId !== userId) throw new AppError(403, "Access denied");
+  if (!result) {
+    throw new AppError(404, "Payment record not found");
+  }
 
-  return payment;
+  return result;
 };
 
 const getMyPayments = async (userId: string) => {
@@ -163,7 +160,7 @@ const getMyPayments = async (userId: string) => {
     where: { userId },
     include: {
       rentalOrder: {
-        include: { items: { include: { gearItem: true } } },
+        include: { items: { include: { gears: true } } },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -178,7 +175,7 @@ const getPaymentById = async (
   const payment = await prisma.payment.findUniqueOrThrow({
     where: { id: paymentId },
     include: {
-      rentalOrder: { include: { items: { include: { gearItem: true } } } },
+      rentalOrder: { include: { items: { include: { gears: true } } } },
     },
   });
 

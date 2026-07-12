@@ -8,11 +8,15 @@ const router = Router();
 
 router.post("/webhook", paymentControllers.handleWebhook);
 
-router.post("/create", auth(Role.CUSTOMER), paymentControllers.createPayment);
+router.post(
+  "/create",
+  auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
+  paymentControllers.createPayment,
+);
 
 router.get(
   "/verify/:sessionId",
-  auth(Role.CUSTOMER),
+  auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
   paymentControllers.verifySession,
 );
 

@@ -17,6 +17,20 @@ const createPayment = async (req: Request, res: Response) => {
   });
 };
 
+const verifySession = async (req: Request, res: Response) => {
+  const result = await paymentServices.verifySession(
+    req.params?.sessionId as string,
+    req.user?.id as string,
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Payment verified successfully",
+    data: result,
+  });
+};
+
 // Webhook — raw body required
 const handleWebhook = async (req: Request, res: Response) => {
   const signature = req.headers["stripe-signature"] as string;
@@ -25,21 +39,6 @@ const handleWebhook = async (req: Request, res: Response) => {
     signature,
   );
   res.json(result);
-};
-
-// Frontend calls after redirect from Stripe success_url
-const verifySession = async (req: Request, res: Response) => {
-  const { sessionId } = req.params;
-  const result = await paymentServices.verifySession(
-    sessionId as string,
-    req.user?.id as string,
-  );
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Payment verified successfully",
-    data: result,
-  });
 };
 
 const getMyPayments = async (req: Request, res: Response) => {
