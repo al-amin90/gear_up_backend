@@ -57,14 +57,21 @@ const getPaymentById = async (req: Request, res: Response) => {
   });
 };
 
-// Webhook — raw body required
 const handleWebhook = async (req: Request, res: Response) => {
+  const event = req.body;
   const signature = req.headers["stripe-signature"] as string;
+
   const result = await paymentServices.handleWebhook(
-    req.body as Buffer,
+    event as Buffer,
     signature,
   );
-  res.json(result);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Webhook trigger Successfully",
+    data: null,
+  });
 };
 
 export const paymentControllers = {

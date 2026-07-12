@@ -5,6 +5,7 @@ import AppError from "../../utils/AppError";
 import { prisma } from "../../../lib/prisma";
 import { stripe } from "../../../lib/stripe";
 import config from "../../config";
+import { handleChangeSubscription, paymentComplete } from "./payment.utils";
 
 const createPayment = async (rentalOrderId: string, userId: string) => {
   const transitionResult = await prisma.$transaction(async (tx) => {
@@ -152,48 +153,37 @@ const getPaymentById = async (id: string, userId: string, isAdmin: boolean) => {
   return payment;
 };
 
-// Called by Stripe Webhook — most reliable approach
-const handleWebhook = async (rawBody: Buffer, signature: string) => {
-  let event: Stripe.Event;
+const handleWebhook = async (payload: Buffer, signature: string) => {
+  let event = stripe.webhooks.constructEvent(
+    payload,
+    signature,
+    config.stripe_webhook_secret as string,
+  );
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET as string,
-    );
-  } catch {
-    throw new AppError(400, "Invalid webhook signature");
-  }
+  // Handle the event
+  switch (event.type) {
+    case "checkout.session.completed":
+      // Occurs when a Checkout Session has been successfully completed.
+      await paymentComplete(event.data.object);
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const { rentalOrderId } = session.metadata as { rentalOrderId: string };
+      break;
+    case "checkout.session.expired":
+      // Occurs whenever a customer is signed up for a new plan.
+      // for test :??stripe subscriptions cancel sub_1TrjErKijEE9qSYDz0mTZSmE
+      await handleChangeSubscription(event.data.object);
 
-    await prisma.$transaction(async (tx) => {
-      await tx.payment.update({
-        where: { rentalOrderId },
-        data: {
-          status: PaymentStatus.COMPLETED,
-          transactionId: session.payment_intent as string,
-          paidAt: new Date(),
-        },
-      });
-      await tx.rentalOrder.update({
-        where: { id: rentalOrderId },
-        data: { status: OrderStatus.PAID },
-      });
-    });
-  }
+      break;
+    case "checkout.session.async_payment_failed":
+      // Occurs when a payment intent using a delayed payment method fails.
+      await handleChangeSubscription(event.data.object);
 
-  if (event.type === "checkout.session.expired") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const { rentalOrderId } = session.metadata as { rentalOrderId: string };
+      break;
 
-    await prisma.payment.update({
-      where: { rentalOrderId },
-      data: { status: PaymentStatus.FAILED },
-    });
+    default:
+      // Unexpected event type
+      console.log(`Unhandled event type ${event.type}.`);
+
+      break;
   }
 
   return { received: true };

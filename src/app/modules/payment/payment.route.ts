@@ -6,8 +6,6 @@ import { paymentControllers } from "./payment.controller";
 
 const router = Router();
 
-router.post("/webhook", paymentControllers.handleWebhook);
-
 router.post(
   "/create",
   auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
@@ -31,5 +29,7 @@ router.get(
   auth(Role.CUSTOMER, Role.ADMIN),
   paymentControllers.getPaymentById,
 );
+
+router.post("/webhook", paymentControllers.handleWebhook);
 
 export const paymentRouter = router;
