@@ -31,18 +31,9 @@ const verifySession = async (req: Request, res: Response) => {
   });
 };
 
-// Webhook — raw body required
-const handleWebhook = async (req: Request, res: Response) => {
-  const signature = req.headers["stripe-signature"] as string;
-  const result = await paymentServices.handleWebhook(
-    req.body as Buffer,
-    signature,
-  );
-  res.json(result);
-};
-
 const getMyPayments = async (req: Request, res: Response) => {
   const result = await paymentServices.getMyPayments(req.user?.id as string);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -57,12 +48,23 @@ const getPaymentById = async (req: Request, res: Response) => {
     req.user?.id as string,
     req.user?.role === Role.ADMIN,
   );
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Payment retrieved successfully",
     data: result,
   });
+};
+
+// Webhook — raw body required
+const handleWebhook = async (req: Request, res: Response) => {
+  const signature = req.headers["stripe-signature"] as string;
+  const result = await paymentServices.handleWebhook(
+    req.body as Buffer,
+    signature,
+  );
+  res.json(result);
 };
 
 export const paymentControllers = {

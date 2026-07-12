@@ -85,6 +85,73 @@ const createPayment = async (rentalOrderId: string, userId: string) => {
   return transitionResult;
 };
 
+const verifySession = async (sessionId: string, userId: string) => {
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  console.log("session", session);
+
+  if (session.payment_status !== "paid") {
+    throw new AppError(400, "Payment not completed");
+  }
+
+  const { rentalOrderId } = session.metadata as { rentalOrderId: string };
+
+  const result = await prisma.payment.findUnique({
+    where: {
+      rentalOrderId,
+    },
+  });
+
+  if (!result) {
+    throw new AppError(404, "Payment record not found");
+  }
+
+  return result;
+};
+
+const getMyPayments = async (userId: string) => {
+  const result = await prisma.payment.findMany({
+    where: {
+      userId,
+    },
+
+    include: {
+      rentalOrder: {
+        include: {
+          items: true,
+        },
+      },
+    },
+  });
+
+  return result;
+};
+
+const getPaymentById = async (id: string, userId: string, isAdmin: boolean) => {
+  const payment = await prisma.payment.findUniqueOrThrow({
+    where: {
+      id,
+    },
+
+    include: {
+      rentalOrder: {
+        include: {
+          items: {
+            include: {
+              gears: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!isAdmin && payment.userId !== userId) {
+    throw new AppError(403, "Access denied");
+  }
+
+  return payment;
+};
+
 // Called by Stripe Webhook — most reliable approach
 const handleWebhook = async (rawBody: Buffer, signature: string) => {
   let event: Stripe.Event;
@@ -130,60 +197,6 @@ const handleWebhook = async (rawBody: Buffer, signature: string) => {
   }
 
   return { received: true };
-};
-
-const verifySession = async (sessionId: string, userId: string) => {
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-  console.log("session", session);
-
-  if (session.payment_status !== "paid") {
-    throw new AppError(400, "Payment not completed");
-  }
-
-  const { rentalOrderId } = session.metadata as { rentalOrderId: string };
-
-  const result = await prisma.payment.findUnique({
-    where: {
-      rentalOrderId,
-    },
-  });
-
-  if (!result) {
-    throw new AppError(404, "Payment record not found");
-  }
-
-  return result;
-};
-
-const getMyPayments = async (userId: string) => {
-  return await prisma.payment.findMany({
-    where: { userId },
-    include: {
-      rentalOrder: {
-        include: { items: { include: { gears: true } } },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-};
-
-const getPaymentById = async (
-  paymentId: string,
-  userId: string,
-  isAdmin: boolean,
-) => {
-  const payment = await prisma.payment.findUniqueOrThrow({
-    where: { id: paymentId },
-    include: {
-      rentalOrder: { include: { items: { include: { gears: true } } } },
-    },
-  });
-
-  if (!isAdmin && payment.userId !== userId) {
-    throw new AppError(403, "Access denied");
-  }
-
-  return payment;
 };
 
 export const paymentServices = {
