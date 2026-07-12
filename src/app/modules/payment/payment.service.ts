@@ -169,7 +169,6 @@ const handleWebhook = async (payload: Buffer, signature: string) => {
       break;
     case "checkout.session.expired":
       // Occurs whenever a customer is signed up for a new plan.
-      // for test :??stripe subscriptions cancel sub_1TrjErKijEE9qSYDz0mTZSmE
       await handleChangeSubscription(event.data.object);
 
       break;

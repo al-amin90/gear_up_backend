@@ -3,9 +3,10 @@
 import { authServices } from "./auth.service";
 import config from "../../config";
 import sendResponse from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync";
 import type { Request, Response } from "express";
 
-const registerUser = async (req: Request, res: Response) => {
+const registerUser = catchAsync(async (req: Request, res: Response) => {
   const { user } = await authServices.registerUserIntoDB(req.body);
 
   sendResponse(res, {
@@ -14,9 +15,9 @@ const registerUser = async (req: Request, res: Response) => {
     message: "User Created Successfully",
     data: { user },
   });
-};
+});
 
-const getMyProfile = async (req: Request, res: Response) => {
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.getUserFromDB(req.user?.id as string);
 
   sendResponse(res, {
@@ -25,9 +26,9 @@ const getMyProfile = async (req: Request, res: Response) => {
     message: "User Info Get Successfully",
     data: result,
   });
-};
+});
 
-const loginUser = async (req: Request, res: Response) => {
+const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.loginUser(req.body);
 
   const { refreshToken, accessToken } = result;
@@ -55,9 +56,9 @@ const loginUser = async (req: Request, res: Response) => {
       refreshToken,
     },
   });
-};
+});
 
-const refreshToken = async (req: Request, res: Response) => {
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
   const { accessToken } = await authServices.refreshToken(refreshToken);
@@ -77,9 +78,9 @@ const refreshToken = async (req: Request, res: Response) => {
       accessToken,
     },
   });
-};
+});
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.getAllUsers();
 
   sendResponse(res, {
@@ -88,9 +89,9 @@ const getAllUsers = async (req: Request, res: Response) => {
     message: "Users retrieved",
     data: result,
   });
-};
+});
 
-const updateUserStatus = async (req: Request, res: Response) => {
+const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await authServices.updateStatus(
     req.params.userId as string,
     req.body.isActive,
@@ -102,7 +103,7 @@ const updateUserStatus = async (req: Request, res: Response) => {
     message: "User status updated",
     data: result,
   });
-};
+});
 
 export const authControllers = {
   loginUser,

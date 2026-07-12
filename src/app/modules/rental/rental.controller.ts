@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
 import { Role, OrderStatus } from "../../../../generated/prisma/enums";
 import sendResponse from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync";
 import { rentalServices } from "./rental.service";
 
-const createRental = async (req: Request, res: Response) => {
+const createRental = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.createRental(
     req.body,
     req.user?.id as string,
@@ -15,9 +16,9 @@ const createRental = async (req: Request, res: Response) => {
     message: "Rental order created successfully",
     data: result,
   });
-};
+});
 
-const getAllRentals = async (req: Request, res: Response) => {
+const getAllRentals = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.getAllRentals();
 
   sendResponse(res, {
@@ -26,9 +27,9 @@ const getAllRentals = async (req: Request, res: Response) => {
     message: "All rentals retrieved",
     data: result,
   });
-};
+});
 
-const getMyRentals = async (req: Request, res: Response) => {
+const getMyRentals = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.getMyRentals(
     req.user?.id as string,
     req.query,
@@ -41,9 +42,9 @@ const getMyRentals = async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta,
   });
-};
+});
 
-const getRentalById = async (req: Request, res: Response) => {
+const getRentalById = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.getRentalById(
     req.params.rentalId as string,
     req.user?.id as string,
@@ -55,9 +56,9 @@ const getRentalById = async (req: Request, res: Response) => {
     message: "Rental retrieved successfully",
     data: result,
   });
-};
+});
 
-const getProviderOrders = async (req: Request, res: Response) => {
+const getProviderOrders = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.getProviderOrders(
     req.user?.id as string,
     req.query,
@@ -70,9 +71,9 @@ const getProviderOrders = async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta,
   });
-};
+});
 
-const updateOrderStatus = async (req: Request, res: Response) => {
+const updateOrderStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await rentalServices.updateOrderStatus(
     req.params.rentalId as string,
     req.body.status as OrderStatus,
@@ -86,7 +87,7 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     message: "Order status updated successfully",
     data: result,
   });
-};
+});
 
 export const rentalControllers = {
   createRental,

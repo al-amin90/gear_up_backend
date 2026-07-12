@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
 import { Role } from "../../../../generated/prisma/enums";
 import sendResponse from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync";
 import { gearServices } from "./gear.service";
 
-const createGear = async (req: Request, res: Response) => {
+const createGear = catchAsync(async (req: Request, res: Response) => {
   const result = await gearServices.createGear(
     req.body,
     req.user?.id as string,
@@ -15,9 +16,9 @@ const createGear = async (req: Request, res: Response) => {
     message: "Gear created successfully",
     data: result,
   });
-};
+});
 
-const getAllGear = async (req: Request, res: Response) => {
+const getAllGear = catchAsync(async (req: Request, res: Response) => {
   const result = await gearServices.getAllGear(req.query);
 
   sendResponse(res, {
@@ -27,9 +28,9 @@ const getAllGear = async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta,
   });
-};
+});
 
-const getGearById = async (req: Request, res: Response) => {
+const getGearById = catchAsync(async (req: Request, res: Response) => {
   const result = await gearServices.getGearById(req.params.gearId as string);
 
   sendResponse(res, {
@@ -38,9 +39,9 @@ const getGearById = async (req: Request, res: Response) => {
     message: "Gear retrieved successfully",
     data: result,
   });
-};
+});
 
-const updateGear = async (req: Request, res: Response) => {
+const updateGear = catchAsync(async (req: Request, res: Response) => {
   const result = await gearServices.updateGear(
     req.params.gearId as string,
     req.body,
@@ -54,9 +55,9 @@ const updateGear = async (req: Request, res: Response) => {
     message: "Gear updated successfully",
     data: result,
   });
-};
+});
 
-const deleteGear = async (req: Request, res: Response) => {
+const deleteGear = catchAsync(async (req: Request, res: Response) => {
   await gearServices.deleteGear(
     req.params.gearId as string,
     req.user?.id as string,
@@ -69,9 +70,9 @@ const deleteGear = async (req: Request, res: Response) => {
     message: "Gear deleted successfully",
     data: null,
   });
-};
+});
 
-const getMyGear = async (req: Request, res: Response) => {
+const getMyGear = catchAsync(async (req: Request, res: Response) => {
   const result = await gearServices.getMyGear(req.user?.id as string);
 
   sendResponse(res, {
@@ -80,18 +81,20 @@ const getMyGear = async (req: Request, res: Response) => {
     message: "My gear retrieved successfully",
     data: result,
   });
-};
+});
 
-const getAllGearWithoutPagination = async (req: Request, res: Response) => {
-  const result = await gearServices.getAllGearWithoutPagination();
+const getAllGearWithoutPagination = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await gearServices.getAllGearWithoutPagination();
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "All gear retrieved",
-    data: result,
-  });
-};
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "All gear retrieved",
+      data: result,
+    });
+  },
+);
 
 export const gearControllers = {
   createGear,

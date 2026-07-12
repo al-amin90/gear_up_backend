@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync";
 import { reviewServices } from "./review.service";
 
-const createReview = async (req: Request, res: Response) => {
+const createReview = catchAsync(async (req: Request, res: Response) => {
   const result = await reviewServices.createReview(
     req.body,
     req.user?.id as string,
@@ -14,6 +15,6 @@ const createReview = async (req: Request, res: Response) => {
     message: "Review submitted successfully",
     data: result,
   });
-};
+});
 
 export const reviewControllers = { createReview };
