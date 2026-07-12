@@ -2,6 +2,19 @@
 
 Gear Up Backend is the server-side API for a gear rental platform. It provides user authentication, gear management, rental ordering, reviews, and Stripe-based payments for customers and providers.
 
+## Api Documentation Link-
+
+https://documenter.getpostman.com/view/40260868/2sBY4LSN7r
+
+## Live Link-
+
+https://gear-up-backend-ebon.vercel.app/
+
+## Admin Credentials
+
+email: ijesun30@gmail.com
+pass: 12345678
+
 ## Features
 
 - User registration, login, and token refresh
