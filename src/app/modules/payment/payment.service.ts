@@ -88,7 +88,6 @@ const createPayment = async (rentalOrderId: string, userId: string) => {
 
 const verifySession = async (sessionId: string, userId: string) => {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
-  console.log("session", session);
 
   if (session.payment_status !== "paid") {
     throw new AppError(400, "Payment not completed");

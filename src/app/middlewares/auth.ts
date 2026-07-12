@@ -30,7 +30,6 @@ const auth = (...requiredRoles: string[]) => {
     if (!token) {
       throw new AppError(403, "You are not Loged in!");
     }
-    console.log(token);
 
     const verifiedToken = jwtUtils.verifyToken(
       token,

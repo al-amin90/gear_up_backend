@@ -51,13 +51,11 @@ const GlobalErrorHandler: ErrorRequestHandler = (
     message = err.message;
   }
 
-  console.log(":) Global bro", err);
-
   res.status(statusCode).json({
     success: false,
     message,
     // err,
-    stack: err.stack,
+    errorDetails: err.stack,
   });
 };
 

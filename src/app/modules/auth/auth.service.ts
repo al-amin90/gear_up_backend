@@ -114,8 +114,6 @@ const refreshToken = async (refreshToken: string) => {
     config.refresh_token,
   );
 
-  console.log("verifiedToken", verifiedToken);
-
   const { id } = verifiedToken as JwtPayload;
 
   const user = await prisma.user.findUniqueOrThrow({
