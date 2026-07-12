@@ -20,16 +20,20 @@ router.get(
 
 router.get(
   "/",
-  auth(Role.CUSTOMER, Role.ADMIN),
+  auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
   paymentControllers.getMyPayments,
 );
 
 router.get(
   "/:paymentId",
-  auth(Role.CUSTOMER, Role.ADMIN),
+  auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
   paymentControllers.getPaymentById,
 );
 
-router.post("/webhook", paymentControllers.handleWebhook);
+router.post(
+  "/webhook",
+  express.raw({ type: "*/*" }),
+  paymentControllers.handleWebhook,
+);
 
 export const paymentRouter = router;
