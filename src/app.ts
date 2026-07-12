@@ -11,10 +11,11 @@ import { providerRouter } from "./app/modules/provider/provider.route";
 import { rentalRouter } from "./app/modules/rental/rental.route";
 import { reviewRouter } from "./app/modules/review/review.route";
 import { adminRouter } from "./app/modules/admin/admin.route";
+import { paymentRouter } from "./app/modules/payment/payment.route";
 
 const app: Application = express();
 
-app.use("/api/subscription/webhook", express.raw({ type: "application/json" }));
+app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
 // __) parsers
 app.use(express.json());
@@ -42,9 +43,9 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/gear", gearRouter);
 app.use("/api/provider", providerRouter);
 app.use("/api/rentals", rentalRouter);
-// app.use("/api/payments", paymentRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/payments", paymentRouter);
 
 app.get("/", (req, res) => {
   res.send(`This app listening on port ${config.port}`);
