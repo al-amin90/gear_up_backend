@@ -8,7 +8,7 @@ https://documenter.getpostman.com/view/40260868/2sBY4LSN7r
 
 ## Live Link-
 
-https://gear-up-backend-ebon.vercel.app/
+https://gear-up-backend-jjr5.onrender.com/
 
 ## Admin Credentials
 
